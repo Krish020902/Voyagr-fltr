@@ -1,14 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 class BudgetController extends GetxController {
+  final GetStorage storage = GetStorage();
   var selectedBudget = 100000.0.obs;
   var maxBudget = 100000.0.obs;
   var increaseBudget = false.obs;
 
+  BudgetController() {
+    final savedBudget = storage.read<double>('budget');
+    if (savedBudget != null) {
+      selectedBudget.value = savedBudget;
+      if (savedBudget > 100000.0) {
+        maxBudget.value = 500000.0;
+        increaseBudget.value = true;
+      }
+    }
+  }
+
   void updateBudget(double value) {
     selectedBudget.value = value;
+
+    storage.write('budget', value);
   }
 
   void toggleIncreaseBudget(bool value) {
@@ -27,7 +42,9 @@ class BudgetController extends GetxController {
 class BudgetSelector extends StatelessWidget {
   final BudgetController budgetController = Get.put(BudgetController());
 
-  BudgetSelector({super.key});
+  BudgetSelector({
+    super.key,
+  });
   @override
   Widget build(BuildContext context) {
     return Column(

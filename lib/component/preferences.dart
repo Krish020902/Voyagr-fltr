@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 class PreferenceContainer extends GetxController {
-  var selectedPreferences = <String>[].obs;
+  final GetStorage storage = GetStorage();
+  var selectedPreferences = <dynamic>[].obs;
+
+  PreferenceContainer() {
+    final savedPreferences = storage.read<List<dynamic>>('preferences') ?? [];
+    selectedPreferences.addAll(savedPreferences);
+  }
 
   void togglePreference(String preference) {
     if (selectedPreferences.contains(preference)) {
@@ -10,6 +17,7 @@ class PreferenceContainer extends GetxController {
     } else {
       selectedPreferences.add(preference);
     }
+    storage.write('preferences', selectedPreferences.toList());
   }
 }
 
@@ -55,16 +63,30 @@ class PreferencesGrid extends StatelessWidget {
                 ),
               ),
             ),
+            // InkWell(
+            //   onTap: () => preferenceContainer.togglePreference('Pets'),
+            //   child: Obx(
+            //     () => _PreferenceItem(
+            //       icon: preferenceContainer.selectedPreferences.contains("Pets")
+            //           ? Icons.pets
+            //           : Icons.do_not_disturb_alt,
+            //       label: 'Pets',
+            //       isSelected:
+            //           preferenceContainer.selectedPreferences.contains("Pets"),
+            //     ),
+            //   ),
+            // ),
             InkWell(
-              onTap: () => preferenceContainer.togglePreference('Pets'),
+              onTap: () => preferenceContainer.togglePreference('Disco'),
               child: Obx(
                 () => _PreferenceItem(
-                  icon: preferenceContainer.selectedPreferences.contains("Pets")
-                      ? Icons.pets
-                      : Icons.do_not_disturb_alt,
-                  label: 'Pets',
+                  icon:
+                      preferenceContainer.selectedPreferences.contains("Disco")
+                          ? Icons.music_note_outlined
+                          : Icons.music_off_outlined,
+                  label: 'Disco',
                   isSelected:
-                      preferenceContainer.selectedPreferences.contains("Pets"),
+                      preferenceContainer.selectedPreferences.contains("Disco"),
                 ),
               ),
             ),

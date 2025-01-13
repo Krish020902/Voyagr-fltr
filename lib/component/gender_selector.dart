@@ -1,23 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 class GenderController extends GetxController {
-  var selectedGenders = <String>[].obs;
+  final GetStorage storage = GetStorage();
+  var selectedGenders = <dynamic>[].obs;
 
-  void toggleGender(String gender) {
+  GenderController() {
+    final savedGenders = storage.read<List<dynamic>>('selectedGenders');
+    if (savedGenders != null) {
+      selectedGenders.addAll(savedGenders);
+    }
+  }
+
+  void toggleGender(dynamic gender) {
     if (selectedGenders.contains(gender)) {
       selectedGenders.remove(gender);
     } else {
       selectedGenders.add(gender);
     }
+
+    storage.write('selectedGenders', selectedGenders);
   }
 }
 
 class GenderSelector extends StatelessWidget {
   final GenderController genderController = Get.put(GenderController());
-  final Function(List<String>) onGenderSelected;
 
-  GenderSelector({super.key, required this.onGenderSelected});
+  GenderSelector({super.key});
 
   void _showGenderBottomSheet(BuildContext context) {
     showModalBottomSheet(
@@ -48,7 +58,6 @@ class GenderSelector extends StatelessWidget {
                         genderController.selectedGenders.contains('Male'),
                     onTap: () {
                       genderController.toggleGender('Male');
-                      onGenderSelected(genderController.selectedGenders);
                     },
                   )),
               const SizedBox(height: 16),
@@ -59,7 +68,6 @@ class GenderSelector extends StatelessWidget {
                         genderController.selectedGenders.contains('Female'),
                     onTap: () {
                       genderController.toggleGender('Female');
-                      onGenderSelected(genderController.selectedGenders);
                     },
                   )),
               const SizedBox(height: 16),
@@ -70,7 +78,6 @@ class GenderSelector extends StatelessWidget {
                         genderController.selectedGenders.contains('Non-binary'),
                     onTap: () {
                       genderController.toggleGender('Non-binary');
-                      onGenderSelected(genderController.selectedGenders);
                     },
                   )),
               const SizedBox(height: 16),

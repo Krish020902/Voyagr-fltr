@@ -1,20 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 class AgeRangeController extends GetxController {
+  final GetStorage storage = GetStorage();
   var selectedAgeRange = 40.0.obs;
+
+  AgeRangeController() {
+    final savedAgeRange = storage.read<double>('ageRange');
+    if (savedAgeRange != null && savedAgeRange >= 18 && savedAgeRange <= 100) {
+      selectedAgeRange.value = savedAgeRange;
+    } else {
+      selectedAgeRange.value = 40.0;
+    }
+  }
 
   void updateAgeRange(double value) {
     selectedAgeRange.value = value;
     HapticFeedback.lightImpact();
+
+    storage.write('ageRange', value);
   }
 }
 
 class AgeRangeSelector extends StatelessWidget {
-  AgeRangeSelector({super.key});
-
   final AgeRangeController ageRangeController = Get.put(AgeRangeController());
+
+  AgeRangeSelector({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -1,27 +1,14 @@
-import 'package:Voyagr/pages/profile.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
-class BottomNavigation extends StatefulWidget {
-  const BottomNavigation({super.key});
+class BottomNavigation extends StatelessWidget {
+  final int selectedIndex;
+  final Function(int) onItemTapped;
 
-  @override
-  State<BottomNavigation> createState() => _BottomNavigationState();
-}
-
-//getx state mamenagemt.
-//
-class _BottomNavigationState extends State<BottomNavigation> {
-  int _selectedIndex = 0;
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    if (index == 3) {
-      Get.to(ProfilePage());
-    }
-  }
+  const BottomNavigation({
+    super.key,
+    required this.selectedIndex,
+    required this.onItemTapped,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +24,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
         ],
       ),
       child: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        currentIndex: selectedIndex,
+        onTap: onItemTapped,
         selectedItemColor: Colors.teal[700],
         unselectedItemColor: Colors.grey[400],
         backgroundColor: Colors.transparent,
@@ -55,6 +42,10 @@ class _BottomNavigationState extends State<BottomNavigation> {
           BottomNavigationBarItem(
             icon: Icon(Icons.chat_bubble_outline),
             label: 'Chat',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add_location_alt_outlined),
+            label: 'Post Trip',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

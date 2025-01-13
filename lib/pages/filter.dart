@@ -14,8 +14,6 @@ class FilterPage extends StatefulWidget {
 }
 
 class _FilterPageState extends State<FilterPage> {
-  List<String> selectedGender = [];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,15 +23,7 @@ class _FilterPageState extends State<FilterPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              GenderSelector(
-                // Uncomment the line below if you want to pass an initial value
-                // initialValue: selectedGender,
-                onGenderSelected: (genders) {
-                  setState(() {
-                    selectedGender = genders; // Update the parent state
-                  });
-                },
-              ),
+              GenderSelector(),
               const SizedBox(height: 12),
               Divider(height: 10),
               const SizedBox(height: 12),
@@ -53,7 +43,7 @@ class _FilterPageState extends State<FilterPage> {
               const SizedBox(height: 12),
               Divider(height: 10),
               const SizedBox(height: 12),
-              PlaceSelector()
+              PlaceSelector(),
             ],
           ),
         ),

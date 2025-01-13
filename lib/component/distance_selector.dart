@@ -1,19 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 class DistanceController extends GetxController {
+  final GetStorage storage = GetStorage();
   var selectedDistance = 50.0.obs;
+
+  DistanceController() {
+    final savedDistance = storage.read<double>('distance');
+    if (savedDistance != null && savedDistance >= 0 && savedDistance <= 500) {
+      selectedDistance.value = savedDistance;
+    } else {
+      selectedDistance.value = 50.0;
+    }
+  }
 
   void updateDistance(double value) {
     selectedDistance.value = value;
     HapticFeedback.lightImpact();
+
+    storage.write('distance', value);
   }
 }
 
 class DistanceSelector extends StatelessWidget {
   final DistanceController distanceController = Get.put(DistanceController());
-  DistanceSelector({super.key});
+
+  DistanceSelector({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -1,9 +1,18 @@
 import 'package:Voyagr/data/places.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 class PlaceContainer extends GetxController {
-  var selectedPlaces = <String>[].obs;
+  final GetStorage storage = GetStorage();
+  var selectedPlaces = <dynamic>[].obs;
+
+  PlaceContainer() {
+    final savedPlaces = storage.read<List<dynamic>>('places');
+    if (savedPlaces != null) {
+      selectedPlaces.addAll(savedPlaces);
+    }
+  }
 
   void togglePlace(String place) {
     if (selectedPlaces.contains(place)) {
@@ -11,13 +20,17 @@ class PlaceContainer extends GetxController {
     } else {
       selectedPlaces.add(place);
     }
+    // onPlacesSelected(selectedPlaces);
+    storage.write('places', selectedPlaces);
   }
 }
 
 class PlaceSelector extends StatelessWidget {
   final PlaceContainer placeContainer = Get.put(PlaceContainer());
 
-  PlaceSelector({super.key});
+  PlaceSelector({
+    super.key,
+  });
 
   void _showPlacesBottomSheet(BuildContext context) {
     showModalBottomSheet(
@@ -72,7 +85,8 @@ class PlaceSelector extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () => placeContainer.togglePlace(place),
+        onTap: () => placeContainer.togglePlace(place), // Pass callback
+        borderRadius: BorderRadius.circular(25),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
@@ -151,17 +165,5 @@ class PlaceSelector extends StatelessWidget {
         ),
       ),
     );
-    // return Scaffold(
-    //   body: Center(
-    //     child: ElevatedButton(
-    //       onPressed: () => _showPlacesBottomSheet(context),
-    //       child: const Text('Select Places'),
-    //     ),
-    //   ),
-    // );
-    // return FloatingActionButton(
-    //   onPressed: () => _showPlacesBottomSheet(context),
-    //   child: const Icon(Icons.place),
-    // );
   }
 }
