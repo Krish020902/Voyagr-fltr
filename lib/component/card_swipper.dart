@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 
 class CardSwipperWidget extends StatefulWidget {
-  const CardSwipperWidget({Key? key}) : super(key: key);
+  const CardSwipperWidget({super.key});
 
   @override
   _CardSwipperWidgetState createState() => _CardSwipperWidgetState();
@@ -26,9 +26,9 @@ class _CardSwipperWidgetState extends State<CardSwipperWidget> {
         break;
       case CardSwiperDirection.right:
         print('Swiped right');
-        print(spots[previousIndex].location);
-        print(spots[previousIndex].priceRange);
-        print(spots[previousIndex].description);
+        // print(spots[previousIndex].location);
+        // print(spots[previousIndex].priceRange);
+        // print(spots[previousIndex].description);
         break;
       default:
         print('Unknown swipe direction');
@@ -49,30 +49,143 @@ class _CardSwipperWidgetState extends State<CardSwipperWidget> {
   Widget build(BuildContext context) {
     return spots.isEmpty
         ? const Center(child: Text('No spots available'))
-        : CardSwiper(
-            controller: controller,
-            cardsCount: spots.length,
-            numberOfCardsDisplayed: 2,
-            cardBuilder:
-                (context, index, percentThresholdX, percentThresholdY) {
-              return _buildTravelCard(spots[index], index);
-            },
-            onSwipe: (previousIndex, currentIndex, direction) {
-              _handleSwipeDirection(direction, previousIndex!);
-              // Reset expanded state when card is swiped
-              if (expandedCardIndex == previousIndex) {
-                setState(() {
-                  expandedCardIndex = null;
-                });
-              }
-              return true;
-            },
-            scale: 0.9,
-            padding: const EdgeInsets.all(20),
-            allowedSwipeDirection: AllowedSwipeDirection.only(
-              left: true,
-              right: true,
-            ),
+        : Stack(
+            children: [
+              CardSwiper(
+                controller: controller,
+                cardsCount: spots.length,
+                numberOfCardsDisplayed: 2,
+                cardBuilder:
+                    (context, index, percentThresholdX, percentThresholdY) {
+                  return Stack(
+                    children: [
+                      _buildTravelCard(spots[index], index),
+                      // Base card
+                      _buildTravelCard(spots[index], index),
+                      // Full card color overlay
+                      if (percentThresholdX != 0)
+                        Positioned.fill(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: percentThresholdX > 0
+                                  ? Colors.teal.withOpacity(
+                                      (percentThresholdX * 0.15)
+                                          .clamp(0.0, 0.15))
+                                  : Colors.red.withOpacity(
+                                      (percentThresholdX.abs() * 0.15)
+                                          .clamp(0.0, 0.15)),
+                            ),
+                          ),
+                        ),
+                      // Left swipe overlay
+                      if (percentThresholdX < 0)
+                        Positioned.fill(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              gradient: LinearGradient(
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                                colors: [
+                                  Colors.blueGrey.withOpacity(
+                                      (percentThresholdX.abs() * 0.5)
+                                          .clamp(0.0, 0.5)),
+                                  Colors.transparent,
+                                ],
+                              ),
+                            ),
+                            child: Align(
+                              alignment: Alignment.topLeft,
+                              child: Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.close_rounded,
+                                      color: Colors.white,
+                                      size: 40,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    const Text(
+                                      "Avoid",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      // Right swipe overlay
+                      if (percentThresholdX > 0)
+                        Positioned.fill(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              gradient: LinearGradient(
+                                begin: Alignment.centerRight,
+                                end: Alignment.centerLeft,
+                                colors: [
+                                  Colors.teal.withOpacity(
+                                      (percentThresholdX * 0.5)
+                                          .clamp(0.0, 0.5)),
+                                  Colors.transparent,
+                                ],
+                              ),
+                            ),
+                            child: Align(
+                              alignment: Alignment.topRight,
+                              child: Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.favorite_rounded,
+                                      color: Colors.white,
+                                      size: 40,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    const Text(
+                                      'Accompany',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                },
+                onSwipe: (previousIndex, currentIndex, direction) {
+                  _handleSwipeDirection(direction, previousIndex);
+                  if (expandedCardIndex == previousIndex) {
+                    setState(() {
+                      expandedCardIndex = null;
+                    });
+                  }
+                  return true;
+                },
+                scale: 0.9,
+                padding: const EdgeInsets.all(20),
+                allowedSwipeDirection: AllowedSwipeDirection.only(
+                  left: true,
+                  right: true,
+                ),
+              ),
+            ],
           );
   }
 
@@ -225,16 +338,15 @@ class _CardSwipperWidgetState extends State<CardSwipperWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildDetailRow(Icons.location_on, 'Location Type',
-            spot.locationType ?? 'Not specified'),
-        const SizedBox(height: 8),
-        _buildDetailRow(Icons.groups, 'Best For', spot.bestFor ?? 'Everyone'),
-        const SizedBox(height: 8),
         _buildDetailRow(
-            Icons.schedule, 'Best Time', spot.bestTime ?? 'Any time'),
+            Icons.person, 'Gender & Age', '${spot.gender}, ${spot.age}'),
         const SizedBox(height: 8),
-        _buildDetailRow(Icons.landscape, 'Highlights',
-            spot.highlights ?? 'Various attractions'),
+        _buildDetailRow(Icons.groups, 'Travel Interest', spot.travelInterest),
+        const SizedBox(height: 8),
+        _buildDetailRow(Icons.restaurant_menu, 'Diet', spot.diet),
+        const SizedBox(height: 8),
+        _buildDetailRow(Icons.local_activity, 'Preferred Activities',
+            spot.preferredActivities),
       ],
     );
   }

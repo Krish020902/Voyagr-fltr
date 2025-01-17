@@ -2,7 +2,8 @@
     <application
         android:label="Voyagr"
         android:name="${applicationName}"
-        android:icon="@mipmap/launcher_icon">
+        android:icon="@mipmap/launcher_icon"
+        android:importantForAutofill="no">
         <activity
             android:name=".MainActivity"
             android:exported="true"

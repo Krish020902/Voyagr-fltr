@@ -7,7 +7,7 @@ import 'package:Voyagr/component/preferences.dart';
 import 'package:flutter/material.dart';
 
 class FilterPage extends StatefulWidget {
-  FilterPage({super.key});
+  const FilterPage({super.key});
 
   @override
   _FilterPageState createState() => _FilterPageState();

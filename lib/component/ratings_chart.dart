@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_echarts/flutter_echarts.dart';
 
 class RatingChart extends StatefulWidget {
+  const RatingChart({super.key});
+
   @override
   _RatingChartState createState() => _RatingChartState();
 }
@@ -16,7 +18,7 @@ class _RatingChartState extends State<RatingChart> {
       ),
       child: Column(
         children: [
-          Container(
+          SizedBox(
             width: 400,
             height: 250,
             child: Echarts(

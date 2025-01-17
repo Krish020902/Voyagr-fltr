@@ -9,7 +9,7 @@ class ViewMatch extends StatelessWidget {
       body: Stack(
         children: [
           // Background Image
-          Container(
+          SizedBox(
             width: double.infinity,
             height: double.infinity,
             child: Image.asset(
@@ -182,8 +182,8 @@ class InfoItem extends StatelessWidget {
   const InfoItem({
     required this.icon,
     required this.text,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

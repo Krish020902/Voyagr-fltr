@@ -103,11 +103,10 @@ class _PreferenceItem extends StatelessWidget {
   final bool isSelected;
 
   const _PreferenceItem({
-    Key? key,
     required this.icon,
     required this.label,
     required this.isSelected,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

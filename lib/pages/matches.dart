@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import '../data/matches.dart';
 
 class MatchesPage extends StatelessWidget {
+  const MatchesPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

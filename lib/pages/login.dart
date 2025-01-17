@@ -36,8 +36,7 @@ class _LoginPageState extends State<LoginPage> {
       Get.snackbar("Congratulations!", "Logged in Successfully",
           backgroundColor: Colors.blueGrey, colorText: Colors.white);
       final data = jsonDecode(response.body);
-      print("chekc");
-      print(data);
+
       if (data['token'] != null) {
         await prefs.setString('token', data['token']);
       }
@@ -79,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     // const SizedBox(height: 40),
                     // Simple container for logo
-                    Container(
+                    SizedBox(
                       height: 220,
                       width: 220,
                       child: ClipRRect(

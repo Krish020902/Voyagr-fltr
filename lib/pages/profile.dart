@@ -27,6 +27,8 @@ class ProfileContainer extends GetxController {
 class ProfilePage extends StatelessWidget {
   final ProfileContainer profileContainer = Get.put(ProfileContainer());
 
+  ProfilePage({super.key});
+
   Widget _buildHeader() {
     return Padding(
       padding: EdgeInsets.all(16.0),

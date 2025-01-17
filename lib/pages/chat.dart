@@ -9,6 +9,8 @@ class ChatPage extends StatelessWidget {
     ChatItem(name: "Sarah Wilson", message: "Got it, will do!", unreadCount: 0),
   ];
 
+  ChatPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,9 +48,9 @@ class ChatListItem extends StatelessWidget {
   final ChatItem chatItem;
 
   const ChatListItem({
-    Key? key,
+    super.key,
     required this.chatItem,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

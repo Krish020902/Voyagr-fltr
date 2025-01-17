@@ -1,7 +1,6 @@
 import 'package:Voyagr/component/personal_info.dart';
 import 'package:Voyagr/component/travel_preferences.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});

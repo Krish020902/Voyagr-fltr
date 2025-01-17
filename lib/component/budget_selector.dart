@@ -93,7 +93,6 @@ class BudgetSelector extends StatelessWidget {
                 onChanged: (double newValue) {
                   budgetController.updateBudget(newValue);
                   HapticFeedback.lightImpact();
-                  ;
                 },
               ),
             )),

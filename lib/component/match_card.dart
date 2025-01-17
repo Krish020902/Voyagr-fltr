@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 class MatchCard extends StatelessWidget {
   final Map<String, dynamic> match;
 
-  const MatchCard({Key? key, required this.match}) : super(key: key);
+  const MatchCard({super.key, required this.match});
 
   @override
   Widget build(BuildContext context) {
