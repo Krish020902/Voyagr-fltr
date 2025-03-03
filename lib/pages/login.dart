@@ -33,9 +33,9 @@ class _LoginPageState extends State<LoginPage> {
 
     if (response.statusCode == 200) {
       final prefs = await SharedPreferences.getInstance();
-      Get.snackbar("Congratulations!", "Logged in Successfully",
-          backgroundColor: Colors.blueGrey, colorText: Colors.white);
+      Get.snackbar("Congratulations!", "Logged in Successfully", backgroundColor: Colors.blueGrey, colorText: Colors.white);
       final data = jsonDecode(response.body);
+      await prefs.setString('userId', (_emailController.text));
 
       if (data['token'] != null) {
         await prefs.setString('token', data['token']);
@@ -115,16 +115,14 @@ class _LoginPageState extends State<LoginPage> {
                       decoration: InputDecoration(
                         labelText: 'Email or Phone Number',
                         labelStyle: TextStyle(color: Colors.grey[400]),
-                        prefixIcon: Icon(Icons.email,
-                            color: Colors.teal.withOpacity(0.7)),
+                        prefixIcon: Icon(Icons.email, color: Colors.teal.withOpacity(0.7)),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16),
                           borderSide: BorderSide(color: Colors.grey[700]!),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16),
-                          borderSide:
-                              const BorderSide(color: Colors.teal, width: 2),
+                          borderSide: const BorderSide(color: Colors.teal, width: 2),
                         ),
                         filled: true,
                         fillColor: Colors.grey[800]!.withOpacity(0.5),
@@ -144,13 +142,10 @@ class _LoginPageState extends State<LoginPage> {
                       decoration: InputDecoration(
                         labelText: 'Password',
                         labelStyle: TextStyle(color: Colors.grey[400]),
-                        prefixIcon: Icon(Icons.lock,
-                            color: Colors.teal.withOpacity(0.7)),
+                        prefixIcon: Icon(Icons.lock, color: Colors.teal.withOpacity(0.7)),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _isPasswordVisible
-                                ? Icons.visibility
-                                : Icons.visibility_off,
+                            _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
                             color: Colors.teal.withOpacity(0.7),
                           ),
                           onPressed: () {
@@ -165,8 +160,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16),
-                          borderSide:
-                              const BorderSide(color: Colors.teal, width: 2),
+                          borderSide: const BorderSide(color: Colors.teal, width: 2),
                         ),
                         filled: true,
                         fillColor: Colors.grey[800]!.withOpacity(0.5),

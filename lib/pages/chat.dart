@@ -1,43 +1,108 @@
 import 'package:flutter/material.dart';
+import 'package:Voyagr/component/chat_details_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class ChatPage extends StatelessWidget {
-  final List<ChatItem> chatItems = [
-    ChatItem(name: "John Doe", message: "Hey there!", unreadCount: 3),
-    ChatItem(name: "Jane Smith", message: "See you tomorrow!", unreadCount: 1),
-    ChatItem(
-        name: "Mike Johnson", message: "Thanks for the help", unreadCount: 2),
-    ChatItem(name: "Sarah Wilson", message: "Got it, will do!", unreadCount: 0),
+class ChatPage extends StatefulWidget {
+  const ChatPage({super.key});
+
+  @override
+  State<ChatPage> createState() => _ChatPageState();
+}
+
+class _ChatPageState extends State<ChatPage> {
+  List<ChatItem> chatItems = [
+    ChatItem(id: '1', name: "Krish Mehta", message: "Hey there!", unreadCount: 3),
+    ChatItem(id: '2', name: "Jane Smith", message: "See you tomorrow!", unreadCount: 1),
+    ChatItem(id: '3', name: "Mike Johnson", message: "Thanks for the help", unreadCount: 2),
+    ChatItem(id: '4', name: "Sarah Wilson", message: "Got it, will do!", unreadCount: 0),
   ];
 
-  ChatPage({super.key});
+  List<ChatItem> filteredChatItems = [];
+  int? loggedInUserId;
+  ChatItem? loggedInUser;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _getLoggedInUser();
+  }
+
+  Future<void> _getLoggedInUser() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getString('userId') ?? '1';
+
+      setState(() {
+        loggedInUserId = int.tryParse(userId);
+        loggedInUser = chatItems.firstWhere(
+          (item) => item.id == userId,
+          orElse: () => ChatItem(id: userId, name: "Me", message: "", unreadCount: 0),
+        );
+
+        filteredChatItems = chatItems.where((item) => item.id != userId).toList();
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error getting logged in user: $e');
+      setState(() {
+        isLoading = false;
+        filteredChatItems = chatItems;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: Text('My Chats',
-              style: TextStyle(
-                color: Colors.teal,
-                fontSize: 24,
-                // fontWeight: FontWeight.bold,
-              ))),
-      body: ListView.builder(
-        itemCount: chatItems.length,
-        itemBuilder: (context, index) {
-          return ChatListItem(chatItem: chatItems[index]);
-        },
+        automaticallyImplyLeading: false,
+        title: Text(
+          'My Chats',
+          style: TextStyle(
+            color: Colors.teal,
+            fontSize: 24,
+          ),
+        ),
+        actions: [
+          if (loggedInUser != null)
+            Padding(
+              padding: const EdgeInsets.only(right: 12.0),
+              child: CircleAvatar(
+                backgroundColor: Colors.teal,
+                child: Text(
+                  loggedInUser!.name[0],
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+        ],
       ),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator(color: Colors.teal))
+          : filteredChatItems.isEmpty
+              ? Center(child: Text('No chats available'))
+              : ListView.builder(
+                  itemCount: filteredChatItems.length,
+                  itemBuilder: (context, index) {
+                    return ChatListItem(
+                      chatItem: filteredChatItems[index],
+                      loggedInUserId: loggedInUserId,
+                    );
+                  },
+                ),
     );
   }
 }
 
 class ChatItem {
+  final String id;
   final String name;
   final String message;
   final int unreadCount;
 
   ChatItem({
+    required this.id,
     required this.name,
     required this.message,
     required this.unreadCount,
@@ -46,10 +111,12 @@ class ChatItem {
 
 class ChatListItem extends StatelessWidget {
   final ChatItem chatItem;
+  final int? loggedInUserId;
 
   const ChatListItem({
     super.key,
     required this.chatItem,
+    this.loggedInUserId,
   });
 
   @override
@@ -86,7 +153,15 @@ class ChatListItem extends StatelessWidget {
             )
           : null,
       onTap: () {
-        // Handle chat item tap
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatDetailPage(
+              chatItem: chatItem,
+              loggedInUserId: loggedInUserId,
+            ),
+          ),
+        );
       },
     );
   }
